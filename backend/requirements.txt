@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+psycopg2-binary  # For PostgreSQL
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+email-validator # For Pydantic email validation
+pydantic-settings
+python-multipart
