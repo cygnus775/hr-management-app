@@ -16,6 +16,8 @@ origins = [
     "http://127.0.0.1",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
+    "http://157.180.95.128:3000",  # Your server's frontend
+    "http://157.180.95.128:8000",  # Your server's backend
     # Add your deployed frontend URL here when you have one
     # "https://your-deployed-frontend.com",
 ]

@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Building2, Loader2 } from "lucide-react"
+import { API_CONFIG } from "@/lib/config"
 
-const API_BASE_URL = "http://localhost:8000"
+// Use the API_CONFIG.BASE_URL which will be set by environment variables
+const API_BASE_URL = API_CONFIG.BASE_URL
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -35,7 +37,6 @@ export default function LoginPage() {
         method: "POST",
         body: formData,
         headers: {
-          // Add ngrok bypass header if needed
           "ngrok-skip-browser-warning": "true",
           Accept: "application/json",
         },
@@ -47,7 +48,6 @@ export default function LoginPage() {
       console.log("Response headers:", Object.fromEntries(response.headers.entries()))
 
       if (!response.ok) {
-        // Try to get error message from response
         let errorMessage = "Login failed"
 
         try {
@@ -56,7 +56,6 @@ export default function LoginPage() {
             const errorData = await response.json()
             errorMessage = errorData?.detail || errorData?.message || `HTTP ${response.status}: ${response.statusText}`
           } else {
-            // If not JSON, get text response
             const textResponse = await response.text()
             console.log("Non-JSON response:", textResponse)
             errorMessage = `Server error (${response.status}): ${response.statusText}`
@@ -70,7 +69,6 @@ export default function LoginPage() {
         return
       }
 
-      // Check if response is JSON
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
         console.error("Expected JSON response but got:", contentType)
@@ -83,7 +81,6 @@ export default function LoginPage() {
       const data = await response.json()
       console.log("Login successful, received data:", { ...data, access_token: "[REDACTED]" })
 
-      // Store authentication data
       const userData = {
         id: data.user_id,
         email: data.email,
@@ -92,14 +89,12 @@ export default function LoginPage() {
         role: data.role,
       }
 
-      // Set expiry time (24 hours from now)
       const expiryTime = Date.now() + 24 * 60 * 60 * 1000
 
       localStorage.setItem("hr_auth_token", data.access_token)
       localStorage.setItem("hr_user_data", JSON.stringify(userData))
       localStorage.setItem("hr_token_expiry", expiryTime.toString())
 
-      // Redirect based on role
       switch (data.role) {
         case "admin":
           router.push("/admin/dashboard")
