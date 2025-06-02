@@ -1,8 +1,19 @@
 # hr_software/app/core/db.py
 from sqlmodel import create_engine, SQLModel, Session
 from app.core.config import settings
+from sqlalchemy.pool import QueuePool
 
-engine = create_engine(settings.DATABASE_URL, echo=True)
+# Configure the engine with connection pooling and keep-alive settings
+engine = create_engine(
+    settings.DATABASE_URL,
+    echo=True,
+    poolclass=QueuePool,
+    pool_size=5,  # Number of permanent connections
+    max_overflow=10,  # Number of connections that can be created beyond pool_size
+    pool_timeout=30,  # Seconds to wait before giving up on getting a connection from the pool
+    pool_recycle=1800,  # Recycle connections after 30 minutes
+    pool_pre_ping=True,  # Enable connection health checks
+)
 
 
 def create_db_and_tables():
